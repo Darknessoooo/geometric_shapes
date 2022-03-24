@@ -14,8 +14,8 @@ def find_contours(img, color):
 
     return contours
 
-img = cv2.imread("pool_two_bins1.jpg")
-if img == None:
+img = cv2.imread("green_shapes.jpg")
+if img.any() == None:
     print("Не найдена картинка!")
     exit()
 drawing = img.copy()
@@ -34,7 +34,7 @@ if conturs:
             (circle_x , circle_y) , circle_radius = cv2.minEnclosingCircle(cnt)
             circle_area = math.pi * circle_radius**2
             print("Площадь окружности:", circle_area)
-            cv2.circle(drawing, (int(circle_x) , int(circle_y)), int(circle_radius) , (255 , 255 , 0) , 2 )
+            
 
 
 
@@ -42,7 +42,6 @@ if conturs:
                 triangle = cv2.minEnclosingTriangle(cnt)[1]
                 triangle = np.int0(triangle)
                 triangle_area = cv2.contourArea(triangle)
-                cv2.drawContours(drawing , [triangle] , -1 , (100 , 255 , 255) , 2)
             except:
                 triangle_area = 0
             print("Площадь треугольника:", triangle_area)
@@ -58,7 +57,7 @@ if conturs:
             print("Площадь прямогульника: " , rectangle_area)
             print("-----------------")
             print("Площадь прямоугольника:", bounding_w * bounding_h)
-            cv2.drawContours(drawing, [box] , 0 , (0  , 155 , 255) , 2)
+            
 
             rect_w , rect_h =rectangle[1][0], rectangle[1][1]
             aspect_ratio = max(rect_w , rect_h) / min(rect_w , rect_h)
@@ -74,6 +73,15 @@ if conturs:
                 name: abs(contour_area - shapes_areas[name]) for name in shapes_areas
 
             }
+
+
+            shape_name = min(diffs , key = diffs.get)
+            if shape_name == "triangle": 
+                cv2.drawContours(drawing , [triangle] , -1 , (100 , 255 , 255) , 2)
+            elif shape_name == "rectangle" or shape_name == "square":
+                cv2.drawContours(drawing, [box] , 0 , (0  , 155 , 255) , 2)
+            else: 
+                cv2.circle(drawing, (int(circle_x) , int(circle_y)), int(circle_radius) , (255 , 255 , 0) , 2 )
 
             print()
 
