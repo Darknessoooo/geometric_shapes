@@ -20,15 +20,15 @@ if img.any() == None:
     exit()
 drawing = img.copy()
 collor = (
-            (30 , 80  , 0 ),
-            (70 , 200 , 255)
+            (56 , 190  , 90 ),
+            (74 , 255 , 255)
          )
 conturs = find_contours(img , collor)
 
 if conturs:
     for cnt in conturs:
-        if cv2.contourArea(cnt) > 50:
-            contour_area = cv2.contourArea(cnt)
+        contour_area = cv2.contourArea(cnt)
+        if contour_area > 50:
             print("Площадь контура:", cv2.contourArea(cnt))
             cv2.drawContours(drawing , [cnt] , 0 , (255, 255 , 255) , 2)
             (circle_x , circle_y) , circle_radius = cv2.minEnclosingCircle(cnt)
@@ -82,6 +82,19 @@ if conturs:
                 cv2.drawContours(drawing, [box] , 0 , (0  , 155 , 255) , 2)
             else: 
                 cv2.circle(drawing, (int(circle_x) , int(circle_y)), int(circle_radius) , (255 , 255 , 0) , 2 )
+
+
+            moments = cv2.moments(cnt)
+
+            try:
+                x = int(moments['m10']/moments['m00'])
+                y = int(moments['m01']/moments['m00'])
+                cv2.circle(drawing, (x, y), 4, (0, 100, 255), -1, cv2.LINE_AA)
+                font = cv2.FONT_HERSHEY_SIMPLEX
+                cv2.putText(drawing, shape_name, (x-40, y+31), font, 1, (0, 0, 0), 4, cv2.LINE_AA)
+                cv2.putText(drawing, shape_name, (x-41, y+30), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
+            except ZeroDivisionError:
+                pass
 
             print()
 
